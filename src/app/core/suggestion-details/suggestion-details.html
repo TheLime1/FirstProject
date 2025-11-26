@@ -1,0 +1,61 @@
+<div class="details-container" *ngIf="suggestion">
+  <div class="details-card">
+    <div class="details-header">
+      <h2 class="details-title">{{ suggestion.title }}</h2>
+      <span class="status-badge" [ngClass]="'status-' + suggestion.status">
+        {{ getStatusLabel(suggestion.status) }}
+      </span>
+    </div>
+
+    <div class="details-body">
+      <div class="detail-section">
+        <h3 class="section-label">Description</h3>
+        <p class="detail-description">{{ suggestion.description }}</p>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">ID:</span>
+          <span class="detail-value">{{ suggestion.id }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Catégorie:</span>
+          <span class="detail-value category-tag">{{ suggestion.category }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Date:</span>
+          <span class="detail-value">{{ formatDate(suggestion.date) }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Statut:</span>
+          <span class="detail-value">{{ getStatusLabel(suggestion.status) }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Likes:</span>
+          <span class="detail-value">👍 {{ suggestion.likes }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-footer">
+      <a routerLink="/listSuggestion" class="btn-back">
+        ← Back to list
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="error-container" *ngIf="!suggestion && suggestionId">
+  <div class="error-card">
+    <h2>Suggestion non trouvée</h2>
+    <p>La suggestion avec l'ID {{ suggestionId }} n'existe pas.</p>
+    <a routerLink="/listSuggestion" class="btn-back">
+      ← Back to list
+    </a>
+  </div>
+</div>
+

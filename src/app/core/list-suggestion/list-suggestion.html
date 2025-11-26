@@ -1,0 +1,145 @@
+<div class="suggestions-container">
+  <h2 class="page-title">Liste des Suggestions</h2>
+  
+  <!-- Barre de recherche -->
+  <div class="search-container">
+    <input 
+      type="text" 
+      class="search-input" 
+      placeholder="Rechercher par titre ou catégorie..." 
+      [(ngModel)]="searchTerm"
+      (input)="filterSuggestions()"
+    />
+    <span class="search-icon">🔍</span>
+  </div>
+
+  <!-- Section Favoris -->
+  <div class="favorites-section" *ngIf="favoriteSuggestions.length > 0">
+    <h3 class="section-title">
+      <span class="section-icon">⭐</span>
+      Mes Favoris ({{ favoriteSuggestions.length }})
+    </h3>
+    <div class="suggestions-grid favorites-grid">
+      <div class="suggestion-card favorite-card" *ngFor="let suggestion of favoriteSuggestions">
+        <div class="card-header">
+          <h3 class="suggestion-title">{{ suggestion.title }}</h3>
+          <span class="status-badge" [ngClass]="'status-' + suggestion.status">
+            {{ getStatusLabel(suggestion.status) }}
+          </span>
+        </div>
+        
+        <div class="card-body">
+          <p class="suggestion-description">{{ suggestion.description }}</p>
+          
+          <div class="card-meta">
+            <div class="meta-item">
+              <span class="meta-label">Catégorie:</span>
+              <span class="meta-value category-tag">{{ suggestion.category }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Date:</span>
+              <span class="meta-value">{{ formatDate(suggestion.date) }}</span>
+            </div>
+            <div class="meta-item" *ngIf="suggestion.likes > 0">
+              <span class="meta-label">Likes:</span>
+              <span class="meta-value likes-display">👍 {{ suggestion.likes }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions" *ngIf="suggestion.status !== 'refusee'">
+            <button 
+              class="btn-like" 
+              [class.liked]="isLiked(suggestion)"
+              (click)="toggleLike(suggestion)"
+              type="button"
+            >
+              <span class="btn-icon">👍</span>
+              <span class="btn-text">{{ isLiked(suggestion) ? 'Unlike' : 'Like' }}</span>
+              <span class="likes-count" *ngIf="suggestion.likes > 0">({{ suggestion.likes }})</span>
+            </button>
+            
+            <button 
+              class="btn-favorite btn-remove" 
+              (click)="removeFromFavorites(suggestion)"
+              type="button"
+            >
+              <span class="btn-icon">🗑️</span>
+              <span class="btn-text">Retirer des favoris</span>
+            </button>
+          </div>
+          
+          <div class="card-actions">
+            <a [routerLink]="['/listSuggestion', suggestion.id]" class="btn-details">
+              <span class="btn-icon">📋</span>
+              <span class="btn-text">Details</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des suggestions filtrées -->
+  <h3 class="section-title" *ngIf="favoriteSuggestions.length > 0">Toutes les Suggestions</h3>
+  <div class="suggestions-grid">
+    <div class="suggestion-card" *ngFor="let suggestion of filteredSuggestions">
+      <div class="card-header">
+        <h3 class="suggestion-title">{{ suggestion.title }}</h3>
+        <span class="status-badge" [ngClass]="'status-' + suggestion.status">
+          {{ getStatusLabel(suggestion.status) }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <p class="suggestion-description">{{ suggestion.description }}</p>
+        
+        <div class="card-meta">
+          <div class="meta-item">
+            <span class="meta-label">Catégorie:</span>
+            <span class="meta-value category-tag">{{ suggestion.category }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Date:</span>
+            <span class="meta-value">{{ formatDate(suggestion.date) }}</span>
+          </div>
+        </div>
+
+        <!-- Boutons Like et Favoris (affichés seulement si status !== 'refusee') -->
+        <div class="card-actions" *ngIf="suggestion.status !== 'refusee'">
+          <button 
+            class="btn-like" 
+            [class.liked]="isLiked(suggestion)"
+            (click)="toggleLike(suggestion)"
+            type="button"
+          >
+            <span class="btn-icon">👍</span>
+            <span class="btn-text">{{ isLiked(suggestion) ? 'Unlike' : 'Like' }}</span>
+            <span class="likes-count" *ngIf="suggestion.likes > 0">({{ suggestion.likes }})</span>
+          </button>
+          
+          <button 
+            class="btn-favorite" 
+            (click)="isInFavorites(suggestion) ? removeFromFavorites(suggestion) : addToFavorites(suggestion)"
+            [class.active]="isInFavorites(suggestion)"
+            type="button"
+          >
+            <span class="btn-icon">{{ isInFavorites(suggestion) ? '⭐' : '☆' }}</span>
+            <span class="btn-text">{{ isInFavorites(suggestion) ? 'Dans les favoris' : 'Ajouter aux favoris' }}</span>
+          </button>
+        </div>
+        
+        <div class="card-actions">
+          <a [routerLink]="['/listSuggestion', suggestion.id]" class="btn-details">
+            <span class="btn-icon">📋</span>
+            <span class="btn-text">Details</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Message si aucune suggestion trouvée -->
+  <div class="empty-state" *ngIf="filteredSuggestions.length === 0">
+    <p>Aucune suggestion trouvée pour "{{ searchTerm }}".</p>
+  </div>
+</div>
